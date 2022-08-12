@@ -2,6 +2,7 @@
   "name": "@noppin/core",
   "version": "0.1.0",
   "author": "Noppin Contributors",
+  "description": "Contains dependency container and application builder of Noppin.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
