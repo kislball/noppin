@@ -9,6 +9,9 @@ export * from './container/provider'
 export * from './factory/factory'
 export * from './factory/shadows'
 
+export * from './reflect/reflect.module'
+export * from './reflect/reflect.service'
+
 export * from './utils/token'
 export * from './utils/types'
 

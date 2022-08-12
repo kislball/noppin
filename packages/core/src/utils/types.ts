@@ -17,3 +17,5 @@ export type MaybeArray<T> = T | T[]
  * Resolves MaybeArray<T> into T[].
  */
 export const resolveMaybeArray = <T>(p: MaybeArray<T>) => Array.isArray(p) ? p : [p]
+
+export type Predicate<T> = (v: T) => boolean
