@@ -1,0 +1,5 @@
+.turbo
+*.log
+dist
+node_modules
+doc

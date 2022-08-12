@@ -1,0 +1,7 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "out": "doc",
+  "name": "Noppin",
+  "entryPointStrategy": "packages",
+  "entryPoints": ["."]
+}
