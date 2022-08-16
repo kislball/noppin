@@ -9,6 +9,10 @@ export * from './container/provider'
 export * from './factory/factory'
 export * from './factory/shadows'
 
+export * from './logger/logger.interface'
+export * from './logger/logger.shadow'
+export * from './logger/logger'
+
 export * from './reflect/reflect.module'
 export * from './reflect/reflect.service'
 

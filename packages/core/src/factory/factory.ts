@@ -4,6 +4,14 @@ import { Token } from '../container/provider'
 import { Service } from '../app/service'
 import { OnStart, onStartKey, OnStop, onStopKey } from '../app/hooks'
 import { containerShadow, rootShadow } from './shadows'
+import { LoggerFactory } from '../logger/logger.interface'
+import { createDefaultLogger } from '../logger/logger'
+import { loggerShadow } from '../logger/logger.shadow'
+
+export interface FactoryOptions {
+  /** Logger to use */
+  logger: LoggerFactory
+}
 
 /**
  * Factory is a utility which starts entire application.
@@ -13,10 +21,6 @@ export interface Factory {
    * Start starts application and runs OnStart hooks.
    */
   start(): Promise<void>
-  /**
-   * Currently nop.
-   */
-  withLogger(): void
   /**
    * Gets container.
    */
@@ -31,17 +35,23 @@ export interface Factory {
   init(): Promise<void>
 }
 
-export const createFactory = (root: Module): Factory => {
+export const createFactory = (root: Module, options: Partial<FactoryOptions> = {}): Factory => {
   const container = createContainer()
   const initialized: Token[] = []
   const onStart: OnStart[] = []
   const onStop: OnStop[] = []
 
+  const loggerFactory = options.logger ?? createDefaultLogger({})
+  const logger = loggerFactory('noppin-factory')
+
   const containerService = containerShadow(builder => builder.factory(() => container))
   const rootService = rootShadow(builder => builder.factory(() => root))
+  const loggerService = loggerShadow(builder => builder.factory(() => loggerFactory))
   const factoryModule = createModule()
     .service(containerService)
     .service(rootService)
+    .service(loggerService)
+    .name('FactoryModule')
     .import(root)
     .build()
 
@@ -60,7 +70,11 @@ export const createFactory = (root: Module): Factory => {
     })
   }
 
-  const init = () => initModule(factoryModule)
+  const init = async () => {
+    logger.log('Initializing application')
+    await initModule(factoryModule)
+    logger.log('Application initialized')
+  }
 
   const initModule = async (module: Module) => {
     if (initialized.includes(module.token)) return
@@ -85,7 +99,10 @@ export const createFactory = (root: Module): Factory => {
       if (resolved[onStopKey] !== undefined) {
         onStop.push(resolved)
       }
+      logger.log(`Initialized service ${tok.description}`)
     }
+
+    logger.log(`Initialized module ${module.token.description}`)
   }
 
   const start = async () => {
@@ -93,17 +110,19 @@ export const createFactory = (root: Module): Factory => {
     for (const startHook of onStart) {
       await startHook[onStartKey]()
     }
+    logger.log('Application started')
   }
 
   const stop = async () => {
+    logger.log('Stopping app...')
     for (const stopHook of onStop) {
       await stopHook[onStopKey]()
     }
+    logger.log('App stopped')
   }
 
   const factory: Factory = {
     container: () => container,
-    withLogger: () => {},
     start,
     stop,
     init
