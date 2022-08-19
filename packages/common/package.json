@@ -1,0 +1,18 @@
+{
+  "name": "@noppin/common",
+  "version": "0.1.0",
+  "author": "Noppin Contributors",
+  "description": "Contains common code between all packages.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run --passWithNoTests"
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "displayName": "Common",
+    "readmeFile": "./README.md"
+  }
+}
+
